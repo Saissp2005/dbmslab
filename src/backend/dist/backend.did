@@ -1,0 +1,344 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type VenuePublic = 
+ record {
+   address: text;
+   createdAt: Timestamp;
+   id: EntityId;
+   isActive: bool;
+   layoutCols: nat;
+   layoutRows: nat;
+   name: text;
+   totalSeats: nat;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfilePublic = 
+ record {
+   createdAt: Timestamp;
+   email: text;
+   id: UserId;
+   name: text;
+ };
+type UserId = principal;
+type UpdateVenueInput = 
+ record {
+   address: text;
+   id: EntityId;
+   layoutCols: nat;
+   layoutRows: nat;
+   name: text;
+   totalSeats: nat;
+ };
+type UpdateEventInput = 
+ record {
+   description: text;
+   durationMinutes: nat;
+   eventType: EventType;
+   genre: text;
+   id: EntityId;
+   imageUrls: vec text;
+   title: text;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type Timestamp = int;
+type TicketCategory = 
+ variant {
+   balcony;
+   regular;
+   vip;
+ };
+type StripeSessionStatus = 
+ variant {
+   completed: record {
+                response: text;
+                userPrincipal: opt text;
+              };
+   failed: record {error: text;};
+ };
+type StripeConfiguration = 
+ record {
+   allowedCountries: vec text;
+   secretKey: text;
+ };
+type ShowtimeSeatCategoryPublic = 
+ record {
+   availableSeats: nat;
+   category: TicketCategory;
+   priceInCents: nat;
+   totalSeats: nat;
+ };
+type ShowtimePublic = 
+ record {
+   createdAt: Timestamp;
+   endTime: Timestamp;
+   eventId: EntityId;
+   id: EntityId;
+   isActive: bool;
+   seatCategories: vec ShowtimeSeatCategoryPublic;
+   startTime: Timestamp;
+   venueId: EntityId;
+ };
+type ShowtimeOccupancy = 
+ record {
+   bookedSeats: nat;
+   eventTitle: text;
+   occupancyPercent: nat;
+   showtimeId: EntityId;
+   startTime: Timestamp;
+   totalSeats: nat;
+ };
+type SeatStatus = 
+ variant {
+   available;
+   blocked;
+   booked;
+   "reserved";
+ };
+type SeatPublic = 
+ record {
+   bookingId: opt EntityId;
+   category: TicketCategory;
+   col: nat;
+   id: EntityId;
+   row: nat;
+   seatLabel: text;
+   showtimeId: EntityId;
+   status: SeatStatus;
+ };
+type SeatMapPublic = 
+ record {
+   cols: nat;
+   rows: nat;
+   seats: vec SeatPublic;
+   showtimeId: EntityId;
+ };
+type RevenueByEvent = 
+ record {
+   eventId: EntityId;
+   eventTitle: text;
+   totalBookings: nat;
+   totalRevenueCents: nat;
+ };
+type ReserveSeatInput = 
+ record {
+   seatIds: vec EntityId;
+   showtimeId: EntityId;
+ };
+type RefundStatus = 
+ variant {
+   nonRefundable;
+   notApplicable;
+   pending;
+   refunded;
+ };
+type PaymentStatus = 
+ variant {
+   completed;
+   failed;
+   pending;
+   refunded;
+ };
+type PaymentReconciliationRow = 
+ record {
+   amountCents: nat;
+   bookingId: EntityId;
+   createdAt: Timestamp;
+   paymentId: EntityId;
+   status: text;
+   transactionId: opt text;
+   userId: UserId;
+ };
+type PaymentPublic = 
+ record {
+   amountCents: nat;
+   bookingId: EntityId;
+   completedAt: opt Timestamp;
+   createdAt: Timestamp;
+   id: EntityId;
+   paymentMode: PaymentMode;
+   status: PaymentStatus;
+   stripeSessionId: opt text;
+   transactionId: opt text;
+   userId: UserId;
+ };
+type PaymentMode = 
+ variant {
+   card;
+   other;
+ };
+type EventType = 
+ variant {
+   concert;
+   movie;
+   other;
+   sports;
+   workshop;
+ };
+type EventPublic = 
+ record {
+   createdAt: Timestamp;
+   createdBy: UserId;
+   description: text;
+   durationMinutes: nat;
+   eventType: EventType;
+   genre: text;
+   id: EntityId;
+   imageUrls: vec text;
+   isActive: bool;
+   title: text;
+ };
+type EventFilter = 
+ record {
+   dateFrom: opt Timestamp;
+   dateTo: opt Timestamp;
+   eventType: opt EventType;
+   maxPriceCents: opt nat;
+   minPriceCents: opt nat;
+   title: opt text;
+   venueId: opt EntityId;
+ };
+type EntityId = nat;
+type CreateVenueInput = 
+ record {
+   address: text;
+   layoutCols: nat;
+   layoutRows: nat;
+   name: text;
+   totalSeats: nat;
+ };
+type CreateShowtimeInput = 
+ record {
+   eventId: EntityId;
+   seatCategories:
+    vec record {
+          category: TicketCategory;
+          priceInCents: nat;
+          totalSeats: nat;
+        };
+   startTime: Timestamp;
+   venueId: EntityId;
+ };
+type CreateEventInput = 
+ record {
+   description: text;
+   durationMinutes: nat;
+   eventType: EventType;
+   genre: text;
+   imageUrls: vec text;
+   title: text;
+ };
+type CreateBookingInput = 
+ record {
+   seatIds: vec EntityId;
+   showtimeId: EntityId;
+ };
+type BookingStatus = 
+ variant {
+   cancelled;
+   confirmed;
+   pending;
+ };
+type BookingPublic = 
+ record {
+   cancelledAt: opt Timestamp;
+   createdAt: Timestamp;
+   id: EntityId;
+   items: vec BookingItem;
+   qrReference: text;
+   refundStatus: RefundStatus;
+   showtimeId: EntityId;
+   status: BookingStatus;
+   totalAmountCents: nat;
+   userId: UserId;
+ };
+type BookingItem = 
+ record {
+   category: TicketCategory;
+   priceInCents: nat;
+   seatId: EntityId;
+   seatLabel: text;
+ };
+type BookingFilter = 
+ record {
+   showtimeId: opt EntityId;
+   status: opt BookingStatus;
+ };
+type AdminAnalytics = 
+ record {
+   popularEvents: vec RevenueByEvent;
+   showtimeOccupancy: vec ShowtimeOccupancy;
+   totalBookings: nat;
+   totalRevenueCents: nat;
+   totalUsers: nat;
+ };
+service : {
+  _initializeAccessControl: () -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  blockSeats: (showtimeId: nat, seatIds: vec nat) -> ();
+  cancelBooking: (bookingId: nat) -> ();
+  createBooking: (input: CreateBookingInput) -> (nat);
+  createCheckoutSession: (bookingId: nat, successUrl: text, cancelUrl:
+   text) -> (text);
+  createEvent: (input: CreateEventInput) -> (nat);
+  createShowtime: (input: CreateShowtimeInput) -> (nat);
+  createVenue: (input: CreateVenueInput) -> (nat);
+  deleteEvent: (eventId: nat) -> ();
+  deleteShowtime: (showtimeId: nat) -> ();
+  deleteVenue: (venueId: nat) -> ();
+  getAdminAnalytics: () -> (AdminAnalytics) query;
+  getBooking: (bookingId: nat) -> (opt BookingPublic) query;
+  getCallerUserProfile: () -> (opt UserProfilePublic) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getEvent: (eventId: nat) -> (opt EventPublic) query;
+  getMyPayment: (bookingId: nat) -> (opt PaymentPublic) query;
+  getPaymentReconciliation: () -> (vec PaymentReconciliationRow) query;
+  getSeatMap: (showtimeId: nat) -> (SeatMapPublic) query;
+  getShowtime: (showtimeId: nat) -> (opt ShowtimePublic) query;
+  getShowtimeOccupancy: () -> (vec ShowtimeOccupancy) query;
+  getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
+  getUserProfile: (user: principal) -> (opt UserProfilePublic) query;
+  getVenue: (venueId: nat) -> (opt VenuePublic) query;
+  initializeShowtimeSeats: (showtimeId: nat) -> ();
+  isCallerAdmin: () -> (bool) query;
+  isStripeConfigured: () -> (bool) query;
+  listAllBookings: () -> (vec BookingPublic) query;
+  listAllPayments: () -> (vec PaymentPublic) query;
+  listBookingsByShowtime: (showtimeId: nat) -> (vec BookingPublic) query;
+  listEvents: (filter: opt EventFilter) -> (vec EventPublic) query;
+  listMyBookings: (filter: opt BookingFilter) -> (vec BookingPublic) query;
+  listShowtimes: (eventId: opt nat, venueId: opt nat) ->
+   (vec ShowtimePublic) query;
+  listVenues: () -> (vec VenuePublic) query;
+  releaseReservation: (showtimeId: nat, seatIds: vec nat) -> ();
+  reserveSeats: (input: ReserveSeatInput) -> ();
+  saveCallerUserProfile: (name: text, email: text) -> ();
+  setStripeConfiguration: (config: StripeConfiguration) -> ();
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  unblockSeats: (showtimeId: nat, seatIds: vec nat) -> ();
+  updateEvent: (input: UpdateEventInput) -> ();
+  updateVenue: (input: UpdateVenueInput) -> ();
+}

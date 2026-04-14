@@ -1,0 +1,171 @@
+// Version: 1.0.0
+type BookingItem__974632219 =
+  {
+    category : TicketCategory__844027647;
+    priceInCents : Nat;
+    seatId : EntityId__892221652;
+    seatLabel : Text
+  };
+type BookingStatus__866642965 = {#cancelled; #confirmed; #pending};
+type Booking__1057793126 =
+  {
+    var cancelledAt : ?Timestamp__301639476;
+    createdAt : Timestamp__301639476;
+    id : EntityId__892221652;
+    var items : [BookingItem__974632219];
+    var qrReference : Text;
+    var refundStatus : RefundStatus__335822175;
+    showtimeId : EntityId__892221652;
+    var status : BookingStatus__866642965;
+    var totalAmountCents : Nat;
+    userId : UserId__158757552
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type EntityId__892221652 = Nat;
+type EventType__417988997 = {#concert; #movie; #other; #sports; #workshop};
+type Event__543096582 =
+  {
+    createdAt : Timestamp__301639476;
+    createdBy : UserId__158757552;
+    var description : Text;
+    var durationMinutes : Nat;
+    var eventType : EventType__417988997;
+    var genre : Text;
+    id : EntityId__892221652;
+    var imageUrls : [Text];
+    var isActive : Bool;
+    var title : Text
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type PaymentMode__1064075795 = {#card; #other};
+type PaymentStatus__296016569 = {#completed; #failed; #pending; #refunded};
+type Payment__149302498 =
+  {
+    var amountCents : Nat;
+    bookingId : EntityId__892221652;
+    var completedAt : ?Timestamp__301639476;
+    createdAt : Timestamp__301639476;
+    id : EntityId__892221652;
+    var paymentMode : PaymentMode__1064075795;
+    var status : PaymentStatus__296016569;
+    var stripeSessionId : ?Text;
+    var transactionId : ?Text;
+    userId : UserId__158757552
+  };
+type RefundStatus__335822175 =
+  {#nonRefundable; #notApplicable; #pending; #refunded};
+type SeatStatus__432197689 = {#available; #blocked; #booked; #reserved};
+type Seat__835159835 =
+  {
+    var bookingId : ?EntityId__892221652;
+    category : TicketCategory__844027647;
+    col : Nat;
+    id : EntityId__892221652;
+    var reservedAt : ?Timestamp__301639476;
+    var reservedBy : ?UserId__158757552;
+    row : Nat;
+    seatLabel : Text;
+    showtimeId : EntityId__892221652;
+    var status : SeatStatus__432197689
+  };
+type ShowtimeSeatCategory__171355343 =
+  {
+    category : TicketCategory__844027647;
+    var priceInCents : Nat;
+    var totalSeats : Nat
+  };
+type Showtime__923527309 =
+  {
+    createdAt : Timestamp__301639476;
+    var endTime : Timestamp__301639476;
+    eventId : EntityId__892221652;
+    id : EntityId__892221652;
+    var isActive : Bool;
+    var seatCategories : [ShowtimeSeatCategory__171355343];
+    var startTime : Timestamp__301639476;
+    venueId : EntityId__892221652
+  };
+type StripeConfiguration__96897619 =
+  {allowedCountries : [Text]; secretKey : Text};
+type TicketCategory__844027647 = {#balcony; #regular; #vip};
+type Timestamp__301639476 = Int;
+type UserId__158757552 = Principal;
+type UserProfile__277265826 =
+  {
+    var createdAt : Timestamp__301639476;
+    var email : Text;
+    id : UserId__158757552;
+    var name : Text
+  };
+type UserRole__1054455867 = {#admin; #guest; #user};
+type Venue__723125769 =
+  {
+    var address : Text;
+    createdAt : Timestamp__301639476;
+    id : EntityId__892221652;
+    var isActive : Bool;
+    var layoutCols : Nat;
+    var layoutRows : Nat;
+    var name : Text;
+    var totalSeats : Nat
+  };
+actor {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1054455867>
+    };
+  stable bookings :
+    {
+      var root : Node__46230540<Nat, Booking__1057793126>;
+      var size : Nat__490723111
+    };
+  stable events :
+    {
+      var root : Node__46230540<Nat, Event__543096582>;
+      var size : Nat__490723111
+    };
+  stable var nextBookingId : Nat;
+  stable var nextEventId : Nat;
+  stable var nextPaymentId : Nat;
+  stable var nextSeatId : Nat;
+  stable var nextShowtimeId : Nat;
+  stable var nextVenueId : Nat;
+  stable payments :
+    {
+      var root : Node__46230540<Nat, Payment__149302498>;
+      var size : Nat__490723111
+    };
+  stable seats :
+    {
+      var root : Node__46230540<Nat, Seat__835159835>;
+      var size : Nat__490723111
+    };
+  stable showtimes :
+    {
+      var root : Node__46230540<Nat, Showtime__923527309>;
+      var size : Nat__490723111
+    };
+  stable var stripeConfig : ?StripeConfiguration__96897619;
+  stable userProfiles :
+    {
+      var root : Node__46230540<Principal, UserProfile__277265826>;
+      var size : Nat__490723111
+    };
+  stable venues :
+    {
+      var root : Node__46230540<Nat, Venue__723125769>;
+      var size : Nat__490723111
+    }
+};

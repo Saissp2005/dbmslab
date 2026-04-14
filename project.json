@@ -1,0 +1,22 @@
+{
+  "overview": "A full-featured movie and event booking platform where users can browse events, pick seats, pay securely, and manage their tickets — with a complete admin panel for managing venues, showtimes, and bookings.",
+  "features": [
+    "Browse movies, concerts, and events with filtering by date, genre, price, and location",
+    "Interactive seat map with ticket category selection (VIP, Regular, Balcony)",
+    "Stripe-powered secure checkout with booking confirmation",
+    "User dashboard with booking history, status tracking, and cancellation",
+    "Admin panel for managing venues, events, showtimes, and seat inventory",
+    "Booking analytics with revenue reports, occupancy rates, and popular events"
+  ],
+  "category": "productivity",
+  "tags": [
+    "booking",
+    "events",
+    "movies",
+    "tickets",
+    "seat-selection",
+    "admin-panel",
+    "payments"
+  ],
+  "last_updated": "2026-04-14T10:32:45.758Z"
+}
